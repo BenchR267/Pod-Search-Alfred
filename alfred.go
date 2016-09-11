@@ -38,12 +38,22 @@ func (p Pod) Documentation() string {
 }
 
 func (p Pod) Item() *goalfred.Item {
-
 	title := fmt.Sprintf("%s (%s)", p.Name, p.Version)
 	instruction := fmt.Sprintf("pod '%s', '%s'", p.Name, p.Version)
-	i := goalfred.NewItem(title, p.Summary, p.Link)
-	i.Mod.Cmd = goalfred.NewModElement(p.Documentation(), "Open documentation!")
-	i.Mod.Alt = goalfred.NewModElement(instruction, "Copy pod install instructions")
+	i := &goalfred.Item{
+		Title:    title,
+		Subtitle: p.Summary,
+		Arg:      p.Link,
+	}
+	i.Mod.Cmd = &goalfred.ModContent{
+		Arg:      p.Documentation(),
+		Subtitle: "Open documentation!",
+	}
+	i.Mod.Alt = &goalfred.ModContent{
+		Arg:      instruction,
+		Subtitle: "Copy pod install instructions",
+	}
+
 	return i
 }
 
