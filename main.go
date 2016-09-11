@@ -25,7 +25,7 @@ func main() {
 	resp.Print()
 }
 
-type Pod struct {
+type pod struct {
 	Link      string
 	Name      string `json:"id"`
 	Summary   string
@@ -33,11 +33,11 @@ type Pod struct {
 	Platforms []string
 }
 
-func (p Pod) Documentation() string {
+func (p pod) Documentation() string {
 	return fmt.Sprintf("http://cocoadocs.org/docsets/%s/%s", p.Name, p.Version)
 }
 
-func (p Pod) Item() *goalfred.Item {
+func (p pod) Item() *goalfred.Item {
 	title := fmt.Sprintf("%s (%s)", p.Name, p.Version)
 	instruction := fmt.Sprintf("pod '%s', '%s'", p.Name, p.Version)
 	i := &goalfred.Item{
@@ -57,11 +57,11 @@ func (p Pod) Item() *goalfred.Item {
 	return i
 }
 
-type Response struct {
+type response struct {
 	Allocations [][]json.RawMessage `json:"allocations"`
 }
 
-func getPods(searchTerm string) []Pod {
+func getPods(searchTerm string) []pod {
 
 	url := fmt.Sprintf("https://search.cocoapods.org/api/v1/pods.picky.hash.json?query=%v&ids=20&offset=0&sort=quality", searchTerm)
 
@@ -73,13 +73,13 @@ func getPods(searchTerm string) []Pod {
 	defer resp.Body.Close()
 	body, _ := ioutil.ReadAll(resp.Body)
 
-	var response Response
-	json.Unmarshal(body, &response)
+	var res response
+	json.Unmarshal(body, &res)
 
-	rawJson := response.Allocations[0][5]
+	rawJSON := res.Allocations[0][5]
 
-	var pods []Pod
-	err = json.Unmarshal(rawJson, &pods)
+	var pods []pod
+	json.Unmarshal(rawJSON, &pods)
 
 	return pods
 }
