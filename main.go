@@ -5,24 +5,20 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/BenchR267/goalfred"
 )
 
 func main() {
-	queryTerms := os.Args[1:]
-
-	resp := goalfred.NewResponse()
+	queryTerms, _ := goalfred.NormalizedArguments()
+	defer goalfred.Print()
 
 	pods := getPods(strings.Join(queryTerms, "%20"))
 
 	for _, pod := range pods {
-		resp.AddItem(pod)
+		goalfred.Add(pod)
 	}
-
-	resp.Print()
 }
 
 type pod struct {
@@ -37,10 +33,10 @@ func (p pod) Documentation() string {
 	return fmt.Sprintf("http://cocoadocs.org/docsets/%s/%s", p.Name, p.Version)
 }
 
-func (p pod) Item() *goalfred.Item {
+func (p pod) Item() goalfred.Item {
 	title := fmt.Sprintf("%s (%s)", p.Name, p.Version)
 	instruction := fmt.Sprintf("pod '%s', '%s'", p.Name, p.Version)
-	i := &goalfred.Item{
+	i := goalfred.Item{
 		Title:    title,
 		Subtitle: p.Summary,
 		Arg:      p.Link,
